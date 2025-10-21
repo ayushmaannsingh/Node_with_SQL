@@ -22,11 +22,17 @@
 
         <% for(users of user) {%>
             <tr>
-                <th><%=users.id %></th>
-                <th><%=users.email %></th>
-                <th><%=users.username %></th>
+                <td><%=users.id %></td>
+                <td><%=users.email %></td>
+                <td><%=users.username %></td>
+            <td>
+                <form method="GET" action="/users/<%=users.id%>/edit">
+                    <button>Edit username</button>
+                </form>
+            </td>
             </tr>
             <% } %>
+
     </table>
 </body>
 </html>

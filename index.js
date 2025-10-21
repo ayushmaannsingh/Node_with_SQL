@@ -3,7 +3,10 @@
  const express = require("express");
  const app = express(); 
  const path = require ("path");
+ const methodOverride = require("method-override");
 
+ app.use(methodOverride("_method"));
+ app.use(express.urlencoded({extended: true}));
  app.set("view engine", "ejs");
  app.set("views", path.join(__dirname, "/views"));
 
@@ -86,6 +89,54 @@ app.get("/users", (req, res) => {
   res.send("some error in DB");
 } 
    
+});
+
+// Edit Route
+app.get("/users/:id/edit", (req, res) => {
+  let {id} = req.params;
+  let q = `SELECT * FROM users WHERE id='${id}'`;   
+
+  try {
+  connection.query(q, (err, result) => {
+    if (err) throw err;
+   // console.log(result);
+    let user = result[0];
+   res.render("edit.ejs", {user});
+  });
+} catch (err) {
+  console.log(" Error:", err);
+  res.send("some error in DB");
+} 
+  
+   
+});
+
+// UPDATE (DB) Route
+app.patch("/users/:id", (req, res) => {
+  let {id} = req.params;
+  let { password: formPass, username: newUsername } = req.body;
+  let q = `SELECT * FROM users WHERE id='${id}'`;   
+
+  try {
+  connection.query(q, (err, result) => {
+    if (err) throw err;
+    let user = result[0];
+    if (formPass != user.password) {
+      res.send("WRONG password");
+    } else {
+      let q2 = `UPDATE users SET username ='${newUsername}' WHERE id='${id}'`;
+      connection.query(q2, (err, result) => {
+        if(err) throw err;
+        res.redirect("/users");
+      });
+    }
+  
+  });
+} catch (err) {
+  console.log(" Error:", err);
+  res.send("some error in DB");
+} 
+  
 });
 
 app.listen("8080", () => {
