@@ -53,6 +53,7 @@
 
 // connection.end();
 
+// Home Route
 app.get("/", (req, res) => {
   let q = `SELECT count(*) FROM users`;
   try {
@@ -68,6 +69,24 @@ app.get("/", (req, res) => {
 }
   
 }); 
+
+// Show Route
+app.get("/users", (req, res) => {
+   let q  = `SELECT * FROM users`;
+
+   try {
+  connection.query(q, (err, user) => {
+    if (err) throw err;
+   // console.log(result);
+   // res.send(result);
+   res.render("showusers.ejs", {user});
+  });
+} catch (err) {
+  console.log(" Error:", err);
+  res.send("some error in DB");
+} 
+   
+});
 
 app.listen("8080", () => {
   console.log("server is listening to port 8080");
